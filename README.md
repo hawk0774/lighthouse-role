@@ -1,11 +1,9 @@
-
-cat > README.md << 'EOF'
 # Ansible Role: LightHouse
 
 [![Ansible Galaxy](https://img.shields.io/badge/ansible--galaxy-lighthouse-blue.svg)](https://galaxy.ansible.com/hawk0774/lighthouse)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-Разворачивает **LightHouse** — статический сайт от VK (аналог Nginx + статических файлов).
+Разворачивает **LightHouse** — статический сайт от VK.
 
 ---
 
