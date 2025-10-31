@@ -1,38 +1,59 @@
-Role Name
-=========
+# Ansible Role: LightHouse
 
-A brief description of the role goes here.
+[![Ansible Galaxy](https://img.shields.io/badge/ansible--galaxy-lighthouse-blue.svg)](https://galaxy.ansible.com/hawk0774/lighthouse)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-Requirements
-------------
+Разворачивает **LightHouse** — статический сайт от VK (аналог Nginx + статических файлов).
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+---
 
-Role Variables
---------------
+## Требования
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+- ОС: **CentOS 7/8**, **RHEL**, **Rocky**, **AlmaLinux**
+- **Nginx** должен быть установлен и запущен (устанавливается в `pre_tasks` playbook)
+- `git` для клонирования репозитория
+- Ansible: **>= 2.14**
+- Права: `become: yes`
 
-Dependencies
-------------
+---
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+## Зависимости
 
-Example Playbook
-----------------
+- **Nginx** (устанавливается отдельно)
+- **Git**
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+> Установка зависимостей — **вне роли**, в `pre_tasks` playbook
 
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+---
 
-License
--------
+## Переменные роли
 
-BSD
+| Переменная | Описание | Тип | По умолчанию |
+|-----------|----------|-----|---------------|
+| `lighthouse_dir` | Путь к директории сайта | string | `/opt/lighthouse` |
+| `lighthouse_repo` | URL Git-репозитория | string | `https://github.com/VKCOM/lighthouse.git` |
+| `lighthouse_version` | Версия (ветка/тег/хеш) | string | `master` |
+| `nginx_config_dest` | Путь к конфигу Nginx | string | `/etc/nginx/conf.d/lighthouse.conf` |
 
-Author Information
-------------------
+---
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+## Пример использования
+
+```yaml
+# playbook.yml
+- hosts: web
+  become: yes
+  pre_tasks:
+    - name: Install nginx and git
+      yum:
+        name: [nginx, git]
+        state: present
+    - name: Start nginx
+      systemd:
+        name: nginx
+        state: started
+        enabled: yes
+  roles:
+    - role: lighthouse
+      lighthouse_version: "v1.0.0"
+      lighthouse_dir: "/var/www/lighthouse"
