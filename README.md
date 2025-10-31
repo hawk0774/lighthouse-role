@@ -1,56 +1,56 @@
 
----
+cat > README.md << 'EOF'
+# Ansible Role: LightHouse
 
-## 2. `README.md` для `lighthouse-role`
+[![Ansible Galaxy](https://img.shields.io/badge/ansible--galaxy-lighthouse-blue.svg)](https://galaxy.ansible.com/hawk0774/lighthouse)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-```markdown
-# LightHouse  
-**Статический сайт от VK за 30 секунд**  
-
-[![Galaxy](https://img.shields.io/badge/galaxy-hawk0774.lighthouse-4c1?logo=ansible)](https://galaxy.ansible.com/ui/standalone/roles/hawk0774/lighthouse/)  
-[![Version](https://img.shields.io/badge/version-v1.1.0-success)](https://github.com/hawk0774/lighthouse-role/releases/tag/v1.1.0)  
-[![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)  
-[![Stars](https://img.shields.io/github/stars/hawk0774/lighthouse-role?style=social)](https://github.com/hawk0774/lighthouse-role)
-
-> **LightHouse** — **молниеносный** статический сайт с **Nginx** в одной роли.  
+Разворачивает **LightHouse** — статический сайт от VK (аналог Nginx + статических файлов).
 
 ---
 
-## Что делает роль?  
-1. Клонирует репозиторий  
-2. Разворачивает **Nginx-конфиг**  
-3. Перезапускает Nginx  
+## Требования
+
+- ОС: **CentOS 7/8**, **RHEL**, **Rocky**, **AlmaLinux**
+- **Nginx** должен быть установлен и запущен (устанавливается в `pre_tasks` playbook)
+- `git` для клонирования репозитория
+- Ansible: **>= 2.14**
+- Права: `become: yes`
 
 ---
 
-## Требования  
-- **Nginx** + **git** (устанавливаются в `pre_tasks`)  
-- **Ansible** ≥ `2.14`  
-- **Права**: `become: yes`  
+## Зависимости
+
+- **Nginx** (устанавливается отдельно)
+- **Git**
+
+> Установка зависимостей — **вне роли**, в `pre_tasks` playbook
 
 ---
 
-## Переменные  
+## Переменные роли
 
-| Переменная | Описание | По умолчанию |
-|-----------|----------|--------------|
-| `lighthouse_dir` | Папка сайта | `/opt/lighthouse` |
-| `lighthouse_repo` | Репозиторий | `https://github.com/VKCOM/lighthouse.git` |
-| `lighthouse_version` | Ветка/тег/хеш | `master` |
-| `nginx_config_dest` | Путь к конфигу | `/etc/nginx/conf.d/lighthouse.conf` |
+| Переменная | Описание | Тип | По умолчанию |
+|-----------|----------|-----|---------------|
+| `lighthouse_dir` | Путь к директории сайта | string | `/opt/lighthouse` |
+| `lighthouse_repo` | URL Git-репозитория | string | `https://github.com/VKCOM/lighthouse.git` |
+| `lighthouse_version` | Версия (ветка/тег/хеш) | string | `master` |
+| `nginx_config_dest` | Путь к конфигу Nginx | string | `/etc/nginx/conf.d/lighthouse.conf` |
 
 ---
 
-## Пример Playbook  
+## Пример использования
+
 ```yaml
+# playbook.yml
 - hosts: web
   become: yes
   pre_tasks:
-    - name: Установить зависимости
+    - name: Install nginx and git
       yum:
         name: [nginx, git]
         state: present
-    - name: Запустить Nginx
+    - name: Start nginx
       systemd:
         name: nginx
         state: started
@@ -58,4 +58,4 @@
   roles:
     - role: lighthouse
       lighthouse_version: "v1.0.0"
-      tags: ["lighthouse", "web"]
+      lighthouse_dir: "/var/www/lighthouse"
