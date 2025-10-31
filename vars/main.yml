@@ -3,3 +3,4 @@
 lighthouse_url: "https://github.com/VKCOM/lighthouse.git"
 lighthouse_dir: "/home/admden/lighthouse"
 lighthouse_nginx_user: "root"
+lighthouse_server: "192.168.0.25"
